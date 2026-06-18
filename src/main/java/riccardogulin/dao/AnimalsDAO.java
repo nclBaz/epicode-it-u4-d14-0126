@@ -2,11 +2,15 @@ package riccardogulin.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import riccardogulin.entities.Animal;
 import riccardogulin.entities.Cat;
 import riccardogulin.entities.Dog;
+import riccardogulin.entities.Owner;
 import riccardogulin.exceptions.NotFoundException;
 
+import java.util.List;
 import java.util.UUID;
 
 public class AnimalsDAO {
@@ -59,4 +63,82 @@ public class AnimalsDAO {
 
 		return found;
 	}
+
+
+	public List<Animal> getAllAnimals() {
+		// SELECT * FROM animals <-- SINGLE TABLE
+		// Come sopra però con 2 JOIN in più <-- JOINED
+		// SELECT * FROM dogs poi SELECT * FROM cats e unisce tutto con UNION ALL <-- TABLE PER CLASS
+
+		TypedQuery<Animal> query = em.createQuery("SELECT a FROM Animal a", Animal.class);
+		List<Animal> result = query.getResultList();
+		return result;
+	}
+
+	public List<Dog> getAllDogs() {
+		TypedQuery<Dog> query = em.createQuery("SELECT d FROM Dog d", Dog.class);
+		// SELECT * FROM animals WHERE tipo_animale = 'Cane' <-- SINGLE TABLE
+		// Come sopra però con 1 JOIN su dogs <-- JOINED
+		// SELECT * FROM dogs <-- TABLE PER CLASS
+
+		List<Dog> result = query.getResultList();
+		return result;
+	}
+
+	public List<Animal> getAllAnimalsYoungerThan(int age) {
+		TypedQuery<Animal> query = em.createQuery("SELECT a FROM Animal a WHERE a.age < :param", Animal.class);
+		query.setParameter("param", age);
+		return query.getResultList();
+	}
+
+	public List<Animal> getAnimalsNameStartsWith(String partialName) {
+		TypedQuery<Animal> query = em.createQuery("SELECT a FROM Animal a WHERE LOWER(a.name) LIKE LOWER(:param)", Animal.class);
+		query.setParameter("param", partialName + "%");
+		return query.getResultList();
+	}
+
+
+	public void findByNameAndUpdateName(String currentName, String newName) {
+		// Siccome quest'operazione non è una lettura ma una SCRITTURA, deve essere tutto collocato in una transazione
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+
+		Query query = em.createQuery("UPDATE Animal a SET a.name = :newName WHERE a.name = :currentName ");
+		// UPDATE animals SET name = :newName WHERE name = :currentName
+		query.setParameter("newName", newName);
+		query.setParameter("currentName", currentName);
+
+		query.executeUpdate(); // <-- Questa riga esegue la query nella transazione
+
+		transaction.commit();
+	}
+
+	public void findByNameAndDelete(String name) {
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+
+		Query query = em.createQuery("DELETE FROM Animal a WHERE a.name = :name ");
+		// DELETE FROM animals WHERE name = :name
+		query.setParameter("name", name);
+
+		query.executeUpdate(); // <-- Questa riga esegue la query nella transazione
+
+		transaction.commit();
+	}
+
+	public List<Animal> findByOwnersName(String name) {
+		TypedQuery<Animal> query = em.createQuery("SELECT a FROM Animal a WHERE a.owner.name = :name", Animal.class);
+		// Grazie a JPQL posso attraversare le relazioni tramite la dotnotation sull'attributo che si riferisce
+		// all'altra entità
+		query.setParameter("name", name);
+		return query.getResultList();
+	}
+
+	public List<Animal> findByOwner(Owner owner) {
+		TypedQuery<Animal> query = em.createQuery("SELECT a FROM Animal a WHERE a.owner = :owner", Animal.class);
+		// Grazie a JPQL posso anche usare OGGETTI come parametri (in SQL non si può fare)
+		query.setParameter("owner", owner);
+		return query.getResultList();
+	}
+
 }

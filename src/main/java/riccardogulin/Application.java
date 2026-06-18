@@ -16,9 +16,9 @@ public class Application {
 
 		AnimalsDAO ad = new AnimalsDAO(em);
 
-		Dog rex = new Dog("Rex", 10, 4.2);
-		Cat felix = new Cat("Felix", 2, 3);
-
+		Dog rex = new Dog("Ringhio", 10, 4.2);
+		Cat felix = new Cat("Tom", 2, 3);
+//
 //		ad.save(rex);
 //		ad.save(felix);
 
@@ -33,5 +33,16 @@ public class Application {
 			System.out.println(ex.getMessage());
 		}
 
+//		ad.getAllDogs().forEach(System.out::println);
+
+//		ad.getAllAnimalsYoungerThan(3).forEach(System.out::println);
+
+//		ad.getAnimalsNameStartsWith("r").forEach(System.out::println);
+
+//		ad.findByNameAndUpdateName("Rex", "Rintintin");
+
+//		ad.findByNameAndDelete("Ringhio");
+
+		ad.findByOwnersName("Aldo").forEach(System.out::println);
 	}
 }

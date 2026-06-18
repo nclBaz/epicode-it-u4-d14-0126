@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "animals")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 // @DiscriminatorColumn(name = "tipo_animale")
 
 /*
@@ -47,6 +47,10 @@ public abstract class Animal {
 	private String name;
 	private int age;
 
+	@ManyToOne
+	@JoinColumn(name = "owner_id")
+	private Owner owner;
+
 	protected Animal() {
 	}
 
@@ -67,12 +71,17 @@ public abstract class Animal {
 		return age;
 	}
 
+	public Owner getOwner() {
+		return owner;
+	}
+
 	@Override
 	public String toString() {
 		return "Animal{" +
 				"id=" + id +
 				", name='" + name + '\'' +
 				", age=" + age +
+				", owner=" + owner +
 				'}';
 	}
 }

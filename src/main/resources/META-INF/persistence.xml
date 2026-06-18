@@ -6,6 +6,7 @@
         <class>riccardogulin.entities.Animal</class>
         <class>riccardogulin.entities.Dog</class>
         <class>riccardogulin.entities.Cat</class>
+        <class>riccardogulin.entities.Owner</class>
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5433/u4d14"/>
             <!-- Nel mio caso la porta è 5433 nel vostro sarà 5432 (ovviamente se non l'avete cambiata) -->
