@@ -40,6 +40,7 @@ abbastanza distruttive in termini di performance)
 
 * */
 
+@NamedQuery(name = "findAllAnimals", query = "SELECT a FROM Animal a") // Le NAMED QUERIES sono controllate all'avvio dell'applicazione
 public abstract class Animal {
 	@Id
 	@GeneratedValue

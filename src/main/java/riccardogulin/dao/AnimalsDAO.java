@@ -70,7 +70,7 @@ public class AnimalsDAO {
 		// Come sopra però con 2 JOIN in più <-- JOINED
 		// SELECT * FROM dogs poi SELECT * FROM cats e unisce tutto con UNION ALL <-- TABLE PER CLASS
 
-		TypedQuery<Animal> query = em.createQuery("SELECT a FROM Animal a", Animal.class);
+		TypedQuery<Animal> query = em.createNamedQuery("findAllAnimals", Animal.class);
 		List<Animal> result = query.getResultList();
 		return result;
 	}
